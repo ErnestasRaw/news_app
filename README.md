@@ -1,8 +1,10 @@
-# news_app
+# NewsApp
 
-News app that obtains articles from the newsapi.org.
+News app that obtains articles from the newsapi.org written in flutter.
 
 ## Getting Started
+
+
 
 ## Acknowledgments
 
