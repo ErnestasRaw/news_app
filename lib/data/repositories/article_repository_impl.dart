@@ -1,23 +1,24 @@
 import 'package:injectable/injectable.dart';
 import 'package:news_app/data/models/article_model.dart';
-import 'package:news_app/data/sources/article_api_source.dart';
+import 'package:news_app/data/service/article_api_service.dart';
+import 'package:news_app/domain/entities/article_entity.dart';
 import 'package:news_app/domain/repositories/article_repository.dart';
 
 @Injectable(as: ArticleRepository)
 class ArticleRepositoryImpl implements ArticleRepository {
-  ArticleRepositoryImpl({required this.articleApiSource});
-
-  final ArticleApiSource articleApiSource;
+  final ArticleApiService articleApiService;
+  ArticleRepositoryImpl({required this.articleApiService});
 
   @override
-  Future<List<ArticleModel>> getArticles({
-    int? page = 1,
-    int? pageSize = 100,
+  Future<List<ArticleEntity>> getArticles({
+    int? page,
+    int? pageSize,
   }) async {
-    final response = await articleApiSource.getArticles(
+    final response = await articleApiService.getArticles(
       page: page,
       pageSize: pageSize,
     );
-    return response;
+
+    return response.map((e) => e.toEntity()).toList();
   }
 }

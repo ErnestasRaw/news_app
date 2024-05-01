@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:news_app/data/models/source_model.dart';
+import 'package:news_app/domain/entities/article_entity.dart';
 
 part 'article_model.g.dart';
 
@@ -11,7 +12,7 @@ class ArticleModel {
   String? description;
   String? url;
   String? urlToImage;
-  String? publishedAt;
+  DateTime? publishedAt;
   String? content;
 
   ArticleModel({
@@ -28,4 +29,19 @@ class ArticleModel {
   factory ArticleModel.fromJson(Map<String, dynamic> json) => _$ArticleModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ArticleModelToJson(this);
+}
+
+extension ArticleEntityMapper on ArticleModel {
+  ArticleEntity toEntity() {
+    return ArticleEntity(
+      source: source?.toEntity(),
+      author: author,
+      title: title,
+      description: description,
+      url: url,
+      urlToImage: urlToImage,
+      publishedAt: publishedAt,
+      content: content,
+    );
+  }
 }
