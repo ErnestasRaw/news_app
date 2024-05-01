@@ -1,6 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/core/config/theme/app_theme.dart';
+import 'package:news_app/core/di/di_config.dart';
+import 'package:news_app/presentation/articles_list/view/articles_list_view.dart';
 
-void main() {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await configureDependencies();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        if (navigatorKey.currentContext != null) {
+          ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+            SnackBar(
+              content: Text(
+                "An exception occurred: ${details.exceptionAsString()}",
+              ),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              showCloseIcon: true,
+            ),
+          );
+        }
+      },
+    );
+  };
+
   runApp(const MainApp());
 }
 
@@ -10,40 +38,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'News App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const HomeView(title: 'News App Home View'),
-    );
-  }
-}
-
-class HomeView extends StatefulWidget {
-  const HomeView({super.key, required this.title});
-  final String title;
-
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Initial'),
-          ],
-        ),
-      ),
+      navigatorKey: navigatorKey,
+      initialRoute: "/",
+      theme: appTheme,
+      routes: {
+        "/": (context) => const ArticleListView(),
+      },
     );
   }
 }
